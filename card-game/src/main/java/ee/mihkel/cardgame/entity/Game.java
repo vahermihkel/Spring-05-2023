@@ -1,4 +1,4 @@
-package ee.mihkel.cardgame;
+package ee.mihkel.cardgame.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

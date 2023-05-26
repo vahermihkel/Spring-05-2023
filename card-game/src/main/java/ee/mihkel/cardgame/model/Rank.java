@@ -1,4 +1,4 @@
-package ee.mihkel.cardgame;
+package ee.mihkel.cardgame.model;
 
 import java.util.Random;
 

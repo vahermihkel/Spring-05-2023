@@ -1,5 +1,10 @@
-package ee.mihkel.cardgame;
+package ee.mihkel.cardgame.controller;
 
+import ee.mihkel.cardgame.entity.Game;
+import ee.mihkel.cardgame.repository.GameRepository;
+import ee.mihkel.cardgame.entity.Player;
+import ee.mihkel.cardgame.repository.PlayerRepository;
+import ee.mihkel.cardgame.model.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

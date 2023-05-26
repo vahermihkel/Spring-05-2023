@@ -1,4 +1,4 @@
-package ee.mihkel.cardgame;
+package ee.mihkel.cardgame.model;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package ee.mihkel.cardgame;
+package ee.mihkel.cardgame.entity;
 
 // import javax.persistence.Entity;
 import jakarta.persistence.Entity;

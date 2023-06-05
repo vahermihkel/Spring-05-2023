@@ -1,14 +1,19 @@
 package ee.mihkel.webshop.controller;
 
+import ee.mihkel.webshop.cache.ProductCache;
 import ee.mihkel.webshop.entity.Product;
 import ee.mihkel.webshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class ProductController {
+
+    @Autowired
+    ProductCache productCache;
 
     @Autowired
     ProductRepository productRepository;
@@ -23,13 +28,14 @@ public class ProductController {
     @DeleteMapping("product/{id}")
     public List<Product> deleteProduct(@PathVariable Long id) {
         productRepository.deleteById(id);
+        productCache.emptyCache();
         return productRepository.findAll();
     }
 
     // GET localhost:8080/product/1
     @GetMapping("product/{id}")
-    public Product getProduct(@PathVariable Long id) {
-        return productRepository.findById(id).get();
+    public Product getProduct(@PathVariable Long id) throws ExecutionException {
+        return productCache.getProduct(id);
     }
 
     // POST localhost:8080/product
@@ -46,6 +52,7 @@ public class ProductController {
     public List<Product> editProduct(@RequestBody Product product) {
         if (productRepository.existsById(product.getId())) {
             productRepository.save(product);
+            productCache.updateProduct(product.getId());
         }
         return productRepository.findAll();
     }
@@ -57,6 +64,7 @@ public class ProductController {
         if (product.getStock() > 0) {
             product.setStock(product.getStock()-1);
             productRepository.save(product);
+            productCache.updateProduct(product.getId());
         }
         return productRepository.findAll();
     }
@@ -67,6 +75,7 @@ public class ProductController {
         Product product = productRepository.findById(id).get();
         product.setStock(product.getStock()+1);
         productRepository.save(product);
+        productCache.updateProduct(product.getId());
         return productRepository.findAll();
     }
 

@@ -8,7 +8,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -47,12 +46,14 @@ public class PersonController {
     @GetMapping("person-public")
     public ResponseEntity<List<PersonDto>> getPersonsPublic(){
         List<Person> persons = personRepository.findAll();
-//        ModelMapper modelMapper = new ModelMapper(); // @Autowired
+//        ModelMapper modelMapper = new ModelMapper(); // @Autowired - Dependency Injection
 //        System.out.println(modelMapper);
 //        log.info(modelMapper);
 //        System.out.println("VIGA!!!");
 //        log.error("VIGA!!!");
-        List<PersonDto> personDtos = persons.stream().map(person -> modelMapper.map(person, PersonDto.class)).collect(Collectors.toList());
+        List<PersonDto> personDtos = persons.stream()
+                .map(person -> modelMapper.map(person, PersonDto.class))
+                .collect(Collectors.toList());
         return ResponseEntity.ok().body(personDtos);
     }
 

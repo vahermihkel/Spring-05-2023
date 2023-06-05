@@ -5,6 +5,7 @@ import ee.mihkel.cardgame.repository.GameRepository;
 import ee.mihkel.cardgame.entity.Player;
 import ee.mihkel.cardgame.repository.PlayerRepository;
 import ee.mihkel.cardgame.model.Card;
+import ee.mihkel.cardgame.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,96 +18,26 @@ import java.util.Optional;
 @RestController
 public class CardController {
 
-    // Dependency Injection
     @Autowired
-    GameRepository gameRepository;
-
-    @Autowired
-    PlayerRepository playerRepository;
-
-    Card baseCard;
-    LocalDateTime roundStartTime;
-    Player player;
-    int lives = 3;
-    int correctAnswers = 0;
-    private long gameStartTime;
+    CardService cardService;
 
     @GetMapping("start/{playerName}")
     public Card start(
             @PathVariable String playerName
     ) {
-        if (baseCard == null) {
-            gameStartTime = System.currentTimeMillis();
-            baseCard = new Card();
-            Optional<Player> playerOptional = playerRepository.findById(playerName); // Võib olla Player tüüpi VÕI võib olla null
-            if (playerOptional.isPresent()) {
-                player = playerOptional.get();
-            } else {
-                player = new Player();
-                player.setName(playerName);
-                player.setFirstCreated(new Date());
-                playerRepository.save(player);
-            }
-            correctAnswers = 0;
-            lives = 3;
-        }
-        roundStartTime = LocalDateTime.now();
-        return baseCard;
+        return cardService.getCard(playerName);
     }
 
     // localhost:8080/guess/lower    // localhost:8080/guess/equal    // localhost:8080/guess/higher
     @GetMapping("guess/{input}")
     public String guess(@PathVariable String input) {
-        if (lives <= 0) {
-            return "Elud on otsas! Alusta mängu uuesti!";
-        }
-        if (!input.equals("lower") && !input.equals("equal") && !input.equals("higher")) {
-            return "Vale sisend!";
-        }
-        LocalDateTime limitTime = roundStartTime.plusSeconds(10);
-        LocalDateTime answerTime = LocalDateTime.now();
-        if (answerTime.isAfter(limitTime)) {
-            lives--; // lives -= 1;     lives = lives - 1;
-            if (lives == 0) {
-                sendGameToDb();
-                return "Mäng läbi!";
-            }
-            return "Vastasid liiga hilja!";
-        }
+        String errorMessage = cardService.checkIfCorrect(input);
+        if (errorMessage != null) return errorMessage;
 
-        Card newCard = new Card();
+        errorMessage = cardService.checkIfAnsweredOnCorrectTime();
+        if (errorMessage != null) return errorMessage;
 
-        if (baseCard.getValue() < newCard.getValue() && input.equals("higher") ||
-                baseCard.getValue() == newCard.getValue() && input.equals("equal") ||
-                    baseCard.getValue() > newCard.getValue() && input.equals("lower")) {
-            baseCard = newCard;
-            correctAnswers++;
-            return "Vastasid õigesti!";
-        } else {
-            baseCard = newCard;
-            lives--;
-            if (lives == 0) {
-                sendGameToDb();
-                return "Mäng läbi!";
-            }
-            return "Vastasid valesti!";
-        }
-    }
-
-    private void sendGameToDb() {
-//        if (lives == 0) {
-            Game game = new Game();
-            game.setPlayer(player);
-            game.setCorrectAnswers(correctAnswers);
-            long duration = System.currentTimeMillis() - gameStartTime;
-            game.setDuration(duration);
-            gameRepository.save(game);
-            baseCard = null;
-            if (player.getHighScore() < correctAnswers) {
-                player.setHighScore(correctAnswers);
-                playerRepository.save(player); // muutmisega
-            }
-//        }
+        return cardService.checkIfAnsweredCorrectly(input);
     }
 
     // Kui mäng lõppeb, võiks teada anda kasutajale+++

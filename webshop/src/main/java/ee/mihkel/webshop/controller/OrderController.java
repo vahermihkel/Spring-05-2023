@@ -20,12 +20,15 @@ import org.springframework.web.client.RestTemplate;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class OrderController {
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    OrderService orderService;
 
     // võtab kõik
     @GetMapping("order")
@@ -39,16 +42,17 @@ public class OrderController {
         return orderRepository.findById(id).get();
     }
 
-    @Autowired
-    OrderService orderService;
-
     // LISAMISE UUE ORDERI ANDMEBAASI SEL HETKEL KUI MAKSET ALUSTATAKSE
     @PostMapping ("payment/{personId}")
-    public EverypayLink payment(@PathVariable Long personId, @RequestBody List<Product> products) {
-        double sum = products.stream().mapToDouble(Product::getPrice).sum();
+    public EverypayLink payment(@PathVariable Long personId, @RequestBody List<Product> products) throws ExecutionException {
+
+        List<Product> originalProducts = orderService.getDbProducts(products);
+
+        double sum = originalProducts.stream().mapToDouble(Product::getPrice).sum(); // võtta igaühe juurest ID ja leida ta andmebaasist
+        // cache   Google Guava
 
         // ctrl + alt + m
-        Order dbOrder = orderService.saveOrderToDb(personId, products, sum);
+        Order dbOrder = orderService.saveOrderToDb(personId, originalProducts, sum);
 
         String url = "https://igw-demo.every-pay.com/api/v4/payments/oneoff";
 
@@ -73,4 +77,8 @@ public class OrderController {
 //        return orderRepository.findAll();
 //    }
 
+
+
+  //  https://maksmine.web.app/makse?order_reference=41312330&payment_reference=4f843ae3b18c4837d81a097771f5b4105bd9d0b37d64acb73204cef75c7bf9f1
+    // https://maksmine.web.app/makse?order_reference=41312331&payment_reference=ec64cfc3bd40e4f6296809d5130b768778b38b3a633742d160f6d69babdff138
 }

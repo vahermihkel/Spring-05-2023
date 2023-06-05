@@ -1,5 +1,6 @@
 package ee.mihkel.webshop.service;
 
+import ee.mihkel.webshop.cache.ProductCache;
 import ee.mihkel.webshop.entity.Order;
 import ee.mihkel.webshop.entity.Person;
 import ee.mihkel.webshop.entity.Product;
@@ -8,6 +9,7 @@ import ee.mihkel.webshop.model.EverypayLink;
 import ee.mihkel.webshop.model.EverypayResponse;
 import ee.mihkel.webshop.repository.OrderRepository;
 import ee.mihkel.webshop.repository.PersonRepository;
+import ee.mihkel.webshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,8 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class OrderService {
@@ -28,6 +32,12 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    ProductCache productCache;
 
     @Autowired
     RestTemplate restTemplate;
@@ -70,5 +80,14 @@ public class OrderService {
         data.setTimestamp(ZonedDateTime.now().toString());
         data.setCustomer_url("https://maksmine.web.app/makse");
         return data;
+    }
+
+    public List<Product> getDbProducts(List<Product> products) throws ExecutionException {
+        List<Product> dbProducts = new ArrayList<>();
+        for (Product p: products) {
+            Product originalProduct = productCache.getProduct(p.getId());
+            dbProducts.add(originalProduct);
+        }
+        return dbProducts;
     }
 }

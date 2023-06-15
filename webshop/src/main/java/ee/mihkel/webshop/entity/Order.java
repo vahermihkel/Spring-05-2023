@@ -20,7 +20,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
     private Long id;
-    private boolean paid;
+    private String paid;
     private double totalSum;
     private Date creationDate;
     @ManyToMany

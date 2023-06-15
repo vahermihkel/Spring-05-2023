@@ -71,9 +71,11 @@ public class PersonController {
 
     //POST localhost:8080/person
     @PostMapping("person")
-    public ResponseEntity<List<Person>> addPerson(@RequestBody Person person){
+    public ResponseEntity<List<Person>> addPerson(@RequestBody Person person) throws Exception {
         if (person.getId()==null ||!personRepository.existsById(person.getId())) {
             personRepository.save(person);
+        } else {
+            throw new Exception("Id on juba olemas");
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(personRepository.findAll());
     }

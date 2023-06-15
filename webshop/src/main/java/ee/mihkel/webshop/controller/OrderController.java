@@ -39,24 +39,22 @@ public class OrderController {
     // võtab ühe id järgi
     @GetMapping("order/{id}")
     public Order getOrder(@PathVariable Long id){
-        return orderRepository.findById(id).get();
+        return orderRepository.findById(id).orElseThrow(); // No value present
     }
 
-    // LISAMISE UUE ORDERI ANDMEBAASI SEL HETKEL KUI MAKSET ALUSTATAKSE
+        // LISAMISE UUE ORDERI ANDMEBAASI SEL HETKEL KUI MAKSET ALUSTATAKSE
     @PostMapping ("payment/{personId}")
-    public EverypayLink payment(@PathVariable Long personId, @RequestBody List<Product> products) throws ExecutionException {
-
+    public EverypayLink payment(@PathVariable Long personId, @RequestBody List<Product> products) throws Exception {
         List<Product> originalProducts = orderService.getDbProducts(products);
-
         double sum = originalProducts.stream().mapToDouble(Product::getPrice).sum(); // võtta igaühe juurest ID ja leida ta andmebaasist
-        // cache   Google Guava
-
-        // ctrl + alt + m
         Order dbOrder = orderService.saveOrderToDb(personId, originalProducts, sum);
 
-        String url = "https://igw-demo.every-pay.com/api/v4/payments/oneoff";
+        return orderService.getEverypayLink(sum, dbOrder);
+    }
 
-        return orderService.getEverypayLink(sum, dbOrder, url);
+    @GetMapping("check-payment/{paymentReference}")
+    public Order checkPayment(@PathVariable String paymentReference) {
+        return orderService.checkIfOrderPaid(paymentReference);
     }
 
 

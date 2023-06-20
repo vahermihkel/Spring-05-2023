@@ -5,13 +5,12 @@ import ee.mihkel.cardgame.entity.Player;
 import ee.mihkel.cardgame.repository.GameRepository;
 import ee.mihkel.cardgame.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 public class DatabaseController {
     @Autowired
     GameRepository gameRepository;
@@ -32,9 +31,13 @@ public class DatabaseController {
     }
 
     // 4. Tagatatakse kõik mängud high-score järjekorras
+    @GetMapping("games-by-score")
+    public List<Game> getHighScoreGames(){
+        return gameRepository.findAllByOrderByCorrectAnswersDesc();
+    }
 
-    @GetMapping("card-game")
-    public List<Player> getHighScore(){
+    @GetMapping("players-by-score")
+    public List<Player> getHighScorePlayers(){
         return playerRepository.findAllByOrderByHighScoreDesc();
     }
 
@@ -62,5 +65,11 @@ public class DatabaseController {
     @GetMapping("/players/highest-score")
     public Player getPlayerWithHighestScore() {
         return playerRepository.findFirstByOrderByHighScore();
+    }
+
+    @DeleteMapping("/game/delete/{id}")
+    public List<Game> deleteGameById(@PathVariable Long id){
+        gameRepository.deleteById(id);
+        return gameRepository.findAllByOrderByCorrectAnswersDesc();
     }
 }

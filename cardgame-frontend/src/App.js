@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // tumesinine - tag: div, input, button
 // helesinine - property: placeholder, className
@@ -37,22 +36,127 @@ function App() {
   const guess = (guessValue) => {
     fetch("http://localhost:8080/guess/" + guessValue)
       .then(response => response.text())
-      .then(json => setMessage(json))
+      .then(text => setMessage(text))
   }
+
+  const newRound = () => {
+    setMessage("");
+
+    fetch("http://localhost:8080/start/NEW_ROUND")
+      .then(response => response.json())
+      .then(json => setCard(json))
+  }
+
+  const newGame = () => {
+    setMessage("");
+    setCard({});
+  }
+
+  const [games, setGames] = useState([]); // nordpool ajad
+
+  // uef + enter
+  useEffect(() => { // iga kord kui lehele tulles tehakse kohe fetch
+    fetch("http://localhost:8080/games-by-score")
+      .then(response => response.json())
+      .then(json => setGames(json));
+  }, [card]);
+
+  const deleteGame = (id) => {
+    fetch(`http://localhost:8080/game/delete/${id}`, {"method": "DELETE"})
+      .then(response => response.json())
+      .then((json) => setGames(json))
+    };
+
+  const [players, setPlayers] = useState([]);
+  //ief+enter
+  useEffect(() => { 
+    fetch("http://localhost:8080/players-by-score")
+      .then(response => response.json())
+      .then((json) => setPlayers(json) )
+  }, []);
+
+  const [showTable, setShowTable] = useState(false);
+
+  const handleButtonOnClick = () => {
+    setShowTable(!showTable);
+  };
 
   return (
     <div className="App">
       {/* {muutuja} */}
-      <input ref={nameRef} placeholder="Mängija nimi" />
-      <button onClick={startGame}>Alusta mängu</button>
+      {card.value === undefined &&
+        <div>
+          <input ref={nameRef} placeholder="Mängija nimi" />
+          <button onClick={startGame}>Alusta mängu</button>
+        </div>}
+
+       {/* <div *ngIf="card.value === undefined">
+            <input ref={nameRef} placeholder="Mängija nimi" />
+            <button onClick={startGame}>Alusta mängu</button>
+          </div> */}
+
       <div>{card.rank}</div>
       <div>{card.suit}</div>
-      <button onClick={() => guess("lower")}>Väiksem</button>
-      <button onClick={() => guess("equal")}>Võrdne</button>
-      <button onClick={() => guess("higher")}>Suurem</button>
+      {card.value !== undefined && message === "" &&
+        <div>
+          <button onClick={() => guess("lower")}>Väiksem</button>
+          <button onClick={() => guess("equal")}>Võrdne</button>
+          <button onClick={() => guess("higher")}>Suurem</button>
+        </div>}
       <div>{message}</div>
+      {message !== "" && message !== "Mäng läbi!" && <button onClick={newRound}>Alusta uut raundi</button>}
+      {message === "Mäng läbi!" && <button onClick={newGame}>Alusta uut mängu</button>}
+      <br /> <br></br>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Correct answers</th>
+            <th>Duration</th>
+            <th>Player name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {games.map(game => 
+            <tr key={game.id}>
+              <td>{game.id}</td>
+              <td>{game.correctAnswers}</td>
+              <td>{game.duration}</td>
+              <td>{game.player.name}</td>
+              <td><button onClick={() => deleteGame(game.id)}>Delete</button></td>
+            </tr>)}
+        </tbody>
+      </table>
+      <br/><br/>
+      <button onClick={handleButtonOnClick}>{showTable ? "Hide Table" : "Show players by high score"}</button>
+      {showTable &&(<table>
+      <thead>
+        Players by highest score
+      <tr>
+      <th>Name</th>
+        <th>First Created</th>
+        <th>High Score</th>
+        </tr>
+      </thead>
+        <tbody>
+        {players.map(players =>
+          <tr key={players.id}> 
+            <td>{players.name}</td>
+            <td>{players.firstCreated}</td>
+            <td>{players.highScore}</td>
+          </tr>)}
+        </tbody>
+        </table>)}
     </div>
   );
 }
 
 export default App;
+
+// seal kus tegin "npm start" on kompileerimise errorid
+//     leht läheb halli taustaga ja punane tekst ütleb mulle vea
+
+// runtime errorid
+
+
+// 

@@ -84,13 +84,13 @@ public class CardService {
                 baseCard.getValue() > newCard.getValue() && input.equals("lower")) {
             baseCard = newCard;
             correctAnswers++;
-            return "Vastasid õigesti!";
+            return "Vastasid õigesti!"; // return "CORRECT_ANSWER";
         } else {
             baseCard = newCard;
             lives--;
             if (lives == 0) {
                 sendGameToDb();
-                return "Mäng läbi!";
+                return "Mäng läbi!"; // return "GAME_OVER";
             }
             return "Vastasid valesti!";
         }

@@ -1,0 +1,37 @@
+.App {
+  text-align: center;
+}
+
+.logo {
+  width: 150px;
+  transition: 0.5s;
+  /* height: 150px; */
+}
+
+.logo:hover {
+  opacity: 0.7;
+  cursor: pointer;
+  width: 160px;
+  transition: 0.5s;
+}
+
+.logo:active {
+  border: 1px solid gray;
+}
+
+.menu-button {
+  background-color: blue;
+  border: none;
+  margin: 1px;
+  color: white;
+  border-radius: 5px;
+}
+
+.menu-button:hover {
+  cursor: pointer;
+  color: lightgray;
+}
+
+.menu-button:active {
+  font-weight: bold;
+}

@@ -5,11 +5,8 @@ import { useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 
 function EditProduct() {
-  const { id } = useParams();
-  const [dbProducts, setDbProducts] = useState([]); 
-  const found = dbProducts.find( element => element.id === Number(id) );
+  const { id } = useParams(); // admin/edit-product/:id
 
-  const idRef = useRef();
   const nameRef = useRef();
   const priceRef = useRef();
   const imageRef = useRef();
@@ -17,24 +14,27 @@ function EditProduct() {
   const descriptionRef = useRef();
   const activeRef = useRef();
   const navigate = useNavigate();
-  const [idUnique, setIdUnique] = useState(true);
-  const [isLoading, setLoading] = useState(true);
+
+  const [isLoading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [product, setProduct] = useState({}); 
   
   useEffect(() => {
-   // TODO: BACKENDI PÄRING
-   fetch()
+    fetch(config.backendUrl + "/categories")
+      .then(res => res.json())
+      .then(json => setCategories(json));
   }, []); 
 
   useEffect(() => {
-    fetch("VÕTAME TOOTED")
-  }, []);
+    fetch(config.backendUrl + "/product/" + id)
+      .then(res => res.json())
+      .then(json => setProduct(json));
+  }, [id]); 
 
   const edit = () => {
-    const index = dbProducts.findIndex(element => element.id === Number(id));
 
     const updatedProduct = {
-      "id": Number(idRef.current.value),
+      "id": id,
       "name": nameRef.current.value,
       "price": Number(priceRef.current.value),
       "image": imageRef.current.value,
@@ -43,18 +43,8 @@ function EditProduct() {
       "active": activeRef.current.checked,
     }
 
-    dbProducts[index] = updatedProduct;
     // TODO: BACKENDI PÄRING
     fetch()
-  }
-
-  const checkIdUniqueness = () => {
-    const index = dbProducts.findIndex(e => e.id === Number(idRef.current.value)); 
-    if (index === -1) {
-      setIdUnique(true); 
-    } else {
-      setIdUnique(false);
-    }
   }
 
   if (isLoading === true) {
@@ -63,29 +53,26 @@ function EditProduct() {
 
   return (
     <div>
-      { idUnique === false && <div>Inserted ID is not unique!</div>}
-      {found !== undefined && 
+      {product !== undefined && 
         <div>
-          <label>ID</label> <br />
-          <input ref={idRef} onChange={checkIdUniqueness} type="number" defaultValue={found.id} /> <br />
           <label>Name</label> <br />
-          <input ref={nameRef} type="text" defaultValue={found.name} /> <br />
+          <input ref={nameRef} type="text" defaultValue={product.name} /> <br />
           <label>Price</label> <br />
-          <input ref={priceRef} type="number" defaultValue={found.price} /> <br />
+          <input ref={priceRef} type="number" defaultValue={product.price} /> <br />
           <label>Image</label> <br />
-          <input ref={imageRef} type="text" defaultValue={found.image} /> <br />
+          <input ref={imageRef} type="text" defaultValue={product.image} /> <br />
           <label>Category</label> <br />
-          <select ref={categoryRef} defaultValue={found.category}>
+          <select ref={categoryRef} defaultValue={product.category}>
             <option value="">Vali kategooria!</option>
             {categories.map(category => <option key={category.name}>{category.name}</option>)}
           </select> <br />
           <label>Description</label> <br />
-          <input ref={descriptionRef} type="text" defaultValue={found.description} /> <br />
+          <input ref={descriptionRef} type="text" defaultValue={product.description} /> <br />
           <label>Active</label> <br />
-          <input ref={activeRef} type="checkbox" defaultChecked={found.active} /> <br />
-          <button disabled={idUnique === false} onClick={edit}>Edit</button>
+          <input ref={activeRef} type="checkbox" defaultChecked={product.active} /> <br />
+          <button onClick={edit}>Edit</button>
         </div>}
-      {found === undefined && <div>Product not found</div>}
+      {product === undefined && <div>Product not found</div>}
     </div>
   )
 }

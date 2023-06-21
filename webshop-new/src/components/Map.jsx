@@ -14,11 +14,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 function Map(props) { 
 
-  // function coordinateSetiing(coordinates) {
-  //   const lat = "";
-  //   const long = "";
-  //   return [lat, long];
-  // }
+ // SIIA USEEFFECT
 
   return (
   <div>

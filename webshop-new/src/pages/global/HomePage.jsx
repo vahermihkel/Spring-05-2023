@@ -10,32 +10,41 @@ import CarouselGallery from '../../components/home/CarouselGallery';
 import Pagination from 'react-bootstrap/Pagination';
 
 function HomePage() {
-  const [products, setProducts] = useState([]); 
-  const [filteredProducts, setFilteredProducts] = useState([]); 
-  const [dbProducts, setDbProducts] = useState([]); 
+  const [products, setProducts] = useState([]); // products - lehekülje kaupa tooted (mis on väljanäidatud)
+  const [filteredProducts, setFilteredProducts] = useState([]); // kategooria põhised, mida välja näidatakse selles kategoorias
+  const [dbProducts, setDbProducts] = useState([]); // KÕIK TOOTED ANDMEBAASIST - 13
   const [isLoading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [activePage, setActivePage] = useState(1);
+  const productsInPage = 3;
 
   const pages = [];
-  for (let number = 1; number <= Math.ceil(filteredProducts.length/20); number++) {
+  for (let number = 1; number <= Math.ceil(filteredProducts.length/productsInPage); number++) {
     pages.push(number);
   }
 
-
   useEffect(() => {
-    // TODO: Backendi päring
-    fetch()
+    fetch(config.backendUrl + "/categories")
+      .then((res) => res.json())
+      .then((json) => {
+        setCategories(json);
+      });
   }, []);
   
   useEffect(() => {
-    // TODO: Backendi päring
-    fetch()
+    fetch(config.backendUrl + "/product")
+      .then((res) => res.json())
+      .then((json) => {
+        setProducts(json.slice(0,productsInPage));
+        setFilteredProducts(json); // json || [] ---> kui back-end tagastab "null" ehk tühjuse, kokkujooksmise vältimiseks
+        setDbProducts(json);
+        setLoading(false);
+      });
   }, []);
                   // 1   2   3
   const changePage = (newPage) => {
     setActivePage(newPage);
-    setProducts(filteredProducts.slice(20*newPage-20,20*newPage));
+    setProducts(filteredProducts.slice(productsInPage*newPage-productsInPage,productsInPage*newPage));
   }
 
   if (isLoading === true) {
@@ -54,7 +63,7 @@ function HomePage() {
         />
       <br /><br />
       
-      <div>Showing products: {products.length < 20 ? filteredProducts.length : products.length * activePage}/{filteredProducts.length}</div>
+      <div>Showing products: {products.length < productsInPage ? filteredProducts.length : products.length * activePage}/{filteredProducts.length}</div>
       
       <FilterButtons
         dbProducts={dbProducts}

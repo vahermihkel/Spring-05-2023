@@ -15,19 +15,13 @@ function Shops() {
     fetch()
 	}, []);
 
-  function coordinateSetiing(coordinatesClicked) {
-      const latitude = coordinatesClicked.split(",")[0]
-      const longitude = coordinatesClicked.split(",")[1]
-      setCoordinates({ lngLat: [latitude, longitude], zoom: 13 })
-	}
-
 return (<div>
 		<Button onClick={() => setCoordinates({ lngLat: [58.94, 25.47], zoom: 7 })}>Kõik poed</Button>
 
 		{isLoading === true ? <Spinner /> : 
 			<>
 				{shops.map(e =>
-					<Button key={e.name} onClick={() => coordinateSetiing(e.coordinates)}>{e.name}</Button>
+					<Button key={e.name} onClick={() => setCoordinates({lngLat: [e.latitude, e.longitude], zoom: 13})}>{e.name}</Button>
 				)}
 			</>}
 

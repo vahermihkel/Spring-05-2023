@@ -5,6 +5,8 @@ function CarouselGallery() {
   // alguses võib siit panna useEffectiga tööle, aga ta võtab aega
   // pigem võtta useEffectiga HomePagest ja saata läbi sulgude need pildid siia
 
+  // HTMLs: .map()
+  // pildi src, pildi alt, pildi header, pildi tekst - 4 asja mudeliks Springis
   return (
     <Carousel>
       <Carousel.Item>

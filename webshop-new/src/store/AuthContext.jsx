@@ -9,7 +9,7 @@ export const AuthContextProvider = ({ children }) => {
   const [loggedInUser, setLoggedInUser] = useState({});
 
   // TODO: Backendi päring
-  fetch()
+  // fetch()
 
   const emptyUser = () => {
     setLoggedInUser({});

@@ -6,24 +6,29 @@ function MaintainCategories() {
   const categoryRef = useRef();
 
   useEffect(() => {
-    fetch(config.categoriesDbUrl)
+    fetch(config.backendUrl + "/categories")
       .then(res => res.json())
-      .then(json => setCategories(json || []));
+      .then(json => setCategories(json));
   }, []); 
 
   const add = () => {
-    categories.push({"name": categoryRef.current.value});
-    setCategories(categories.slice()); 
-    // TODO: Backendi päring
-    fetch()
+    const newCategory = {"name": categoryRef.current.value};
+
+    fetch(config.backendUrl + "/category/add", {
+      method: "POST", 
+      body: JSON.stringify(newCategory), 
+      headers: {"Content-Type": "application/json"}
+    })
+      .then(res => res.json())
+      .then(json => setCategories(json));
   }
 
-  const deleteCategory = (index) => {
-    categories.splice(index,1);
-    setCategories(categories.slice());
-    categoryRef.current.value = "";
-    // TODO: Backendi päring
-    fetch()
+  const deleteCategory = (id) => {
+    fetch(config.backendUrl + "/category/delete/" + id, {
+      method: "DELETE"
+    })
+      .then(res => res.json())
+      .then(json => setCategories(json));
   }
 
   return (
@@ -35,7 +40,7 @@ function MaintainCategories() {
       {categories.map((element, index) => 
         <div key={index}>
           {element.name}
-          <button onClick={() => deleteCategory(index)}>x</button>
+          <button onClick={() => deleteCategory(element.id)}>x</button>
         </div>)}
     </div>
   )

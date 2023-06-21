@@ -22,7 +22,7 @@ public class ProductController {
     // GET localhost:8080/product
     @GetMapping("product")
     public List<Product> getProducts() {
-        return productRepository.findAll();
+        return productRepository.findAllByOrderById();
     }
 
     // DELETE localhost:8080/product/1

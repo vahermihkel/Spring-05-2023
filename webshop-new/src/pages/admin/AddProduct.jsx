@@ -6,15 +6,15 @@ import { useRef } from 'react';
 
 function AddProduct() {
 
-  const idRef = useRef();
+  const idRef = useRef(); // kustutada
   const nameRef = useRef();
   const priceRef = useRef();
   const imageRef = useRef();
   const categoryRef = useRef();
   const descriptionRef = useRef();
   const activeRef = useRef();
-  const [idUnique, setIdUnique] = useState(true);
-  const [dbProducts, setDbProducts] = useState([]); 
+  const [idUnique, setIdUnique] = useState(true); // kustutada
+  const [dbProducts, setDbProducts] = useState([]);  // kustutada
   const [categories, setCategories] = useState([]);
   
   useEffect(() => {
@@ -63,7 +63,7 @@ function AddProduct() {
       "description": descriptionRef.current.value,
       "active": activeRef.current.value.checked,
     }
-    dbProducts.push(addProduct);
+    dbProducts.push(addProduct); // kustutada
     toast(t("product_added"));
     // TODO: BACKENDI PÄRING
     fetch()
@@ -76,7 +76,7 @@ function AddProduct() {
     activeRef.current.checked = false;
   }
 
-  const checkIdUniqueness = () => {
+  const checkIdUniqueness = () => { // kustutada
     const index = dbProducts.findIndex(e => e.id === Number(idRef.current.value));
     if (index === -1) {
       setIdUnique(true)

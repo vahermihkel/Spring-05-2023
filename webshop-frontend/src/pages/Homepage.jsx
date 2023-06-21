@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import style from '../Table.module.css';
 
 function Homepage() {
+
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -11,13 +13,31 @@ function Homepage() {
 
   return (
     <div>
-      {products.map(product =>
-        <div key={product.id}>
-          <div>{product.name}</div>
-          <div>{product.price} €</div>
-          <img src={product.image} alt="" />
-          <button>Lisa ostukorvi</button>
-        </div>)}
+
+      <table className={style.layout}>
+        <thead>
+          <tr >
+            <th className={style.td}>Nimetus</th>
+            <th className={style.td}>Hind</th>
+            <th className={style.td}>Kirjeldus</th>
+          </tr>
+        </thead>
+        <tbody className={style.td}>
+
+          {products.map(product =>
+            <tr key={product.id}>
+              <td className={style.td}>{product.name}</td>
+              <td className={style.td}>{product.price}$</td>
+              <td className={style.td}>{product.description}</td>
+
+              <td className={style.td}><img src={product.image} alt='' className={style.custom_size} /></td>
+
+              <td className={style.td}><button>Lisa ostukorvi</button></td>
+            </tr>)}
+
+        </tbody>
+
+      </table>
     </div>
   )
 }

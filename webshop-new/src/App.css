@@ -1,0 +1,72 @@
+.lang {
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+}
+
+.lang:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+.lang:active {
+  padding: 1px;
+}
+
+.map {
+  height: 300px;
+  /* margin-left: 5%;
+  margin-right: 5%; */
+  margin: 0 5%;
+  border-radius: 10px;
+}
+
+.center {
+  text-align: center;
+}
+
+.active-product {
+  background-color: rgb(246, 249, 246);
+  border: 1px solid green;
+}
+
+.inactive-product {
+  background-color: rgb(247, 240, 240);
+  border: 1px solid red;
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+}
+
+.bg-dark {
+  background-color: rgb(84, 76, 76) !important;
+}
+
+.carousel {
+  width: 500px;
+  margin: auto;
+}
+
+@media only screen and (max-width: 500px) {
+  .carousel {
+    width: 400px;
+    margin: auto;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .carousel {
+    width: 300px;
+    margin: auto;
+  }
+}
+
+/* ühele kindlale kohale CSS */
+
+.ad {
+  position: fixed;
+  right: 20px;
+  bottom: 40px;
+}

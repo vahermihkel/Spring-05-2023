@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { ToastContainer, toast } from 'react-toastify';
+import styles from '../Table.module.css';
 
 function AddProduct() {
   const nameRef = useRef();
@@ -28,20 +29,52 @@ function AddProduct() {
 
   return (
     <div>
-      <label>Nimi</label> <br />
-      <input ref={nameRef} type="text" /> <br />
-      <label>Hind</label> <br />
-      <input ref={priceRef} type="number" /> <br />
-      <label>Kirjeldus</label> <br />
-      <input ref={descriptionRef} type="text" /> <br />
-      <label>Pilt</label> <br />
-      <input ref={imageRef} type="text" /> <br />
-      <label>Aktiivne</label> <br />
-      <input ref={activeRef} type="checkbox" /> <br />
-      <label>Kogus</label> <br />
-      <input ref={stockRef} type="number" /> <br />
-      <button onClick={add}>Lisa uus toode</button>
-      <ToastContainer position="bottom-right" />
+       <table className={styles.layout}>
+         <tbody>
+            <tr className={styles.spaces}>
+                <td>
+                    <label>Nimi</label><br />
+                    <input ref={nameRef} type='text' /><br />
+                </td>
+            </tr >
+            <tr className={styles.spaces}>
+                <td >
+                    <label>Hind</label><br />
+                    <input ref={priceRef} type='number' /><br />
+                </td>
+            </tr >
+            <tr className={styles.spaces}>
+                <td>
+                    <label>Kirjeldus</label><br />
+                    <input ref={descriptionRef} type='text' /><br />
+                </td>
+            </tr>
+            <tr className={styles.spaces}>
+                <td>
+                    <label>Pilt</label><br />
+                    <input ref={imageRef} type='text' /><br />
+                </td>
+            </tr>
+            <tr className={styles.spaces}>
+                <td>
+                    <label>Aktiivne</label><br />
+                    <input ref={activeRef} type='checkbox' /><br />
+                </td>
+            </tr>
+            <tr className={styles.spaces}> 
+                <td>
+                    <label>Kogus</label><br />
+                    <input ref={stockRef} type='number' /><br />
+                </td>
+            </tr>
+            <tr className={styles.spaces}>
+                <td>
+                    <button onClick={add}>Lisa uus toode</button>
+                </td>
+            </tr>
+         </tbody>
+        </table>
+        <ToastContainer position="bottom-left" />
     </div>
   );
 }

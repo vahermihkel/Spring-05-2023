@@ -1,0 +1,22 @@
+.custom_size{
+  width: 50px;
+  height: auto;
+  border: 1px solid black;
+}
+
+.td{
+  border: 1px solid black;
+  /* padding-bottom: 8px; */
+}
+
+.layout{
+  border: 2px solid black;
+  margin: auto;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.spaces{
+  border: 1px solid red;
+  margin-bottom: 30px;
+}

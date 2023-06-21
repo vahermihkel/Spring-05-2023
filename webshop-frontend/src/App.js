@@ -11,18 +11,6 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 function App() {
   return (
     <div className="App">
-      {/* <Link to="/">
-        <img className="logo" src="https://estonia.ee/wp-content/uploads/nobe_netist_4.jpg" alt="" />
-      </Link>
-
-      <Link to="/lisa">
-        <button className="menu-button">Lisa toode</button>
-      </Link>
-
-      <Link to="/halda">
-        <button className="menu-button">Halda tooteid</button>
-      </Link> */}
-
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Container>
           <Navbar.Brand as={Link} to="/"><img className="logo" src="https://estonia.ee/wp-content/uploads/nobe_netist_4.jpg" alt="" /></Navbar.Brand>

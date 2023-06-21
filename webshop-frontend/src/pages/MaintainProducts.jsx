@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import style from '../Table.module.css';
 
 function MaintainProducts() {
   const [products, setProducts] = useState([]);
@@ -9,20 +10,57 @@ function MaintainProducts() {
       .then(data => setProducts(data));
   }, []);
 
+  const deleteProduct = (id) => {
+    fetch(`http://localhost:8080/delete/${id}`, { method: "DELETE" })
+      .then(res => res.json())
+      .then(data => setProducts(data))
+  };
+  const increaseStock = (id) => {
+    
+    fetch(`http://localhost:8080/increase-stock/${id}`, { method: "PATCH" })
+      .then(res => res.json())
+      .then(data => setProducts(data))
+  };
+  const decreaseStock = (id) => {
+    
+    fetch(`http://localhost:8080/decrease-stock/${id}`, { method: "PATCH" })
+      .then(res => res.json())
+      .then(data => setProducts(data));
+  }
+
+
+
   return (
     <div>
-      {products.map(product =>
-        <div key={product.id}>
-          <div>{product.id}</div>
-          <div>{product.name}</div>
-          <div>{product.description}</div>
-          <div>{product.price} €</div>
-          <img src={product.image} alt="" />
-          <div>{product.stock} tk</div>
-          <button>Kustuta</button>
-          <button>Vähenda kogust</button>
-          <button>Suurenda kogust</button>
-        </div>)}
+      <table className={style.layout}>
+        <thead>
+          <tr>
+            <th>Nimetus</th>
+            <th>Kirjeldus</th>
+            <th>Hind</th>
+            <th></th>
+            <th>Kogus</th>
+            <th>Redigeeri</th>
+          </tr>
+        </thead>
+        <tbody className={style.td}>
+          {products.map(product =>
+            <tr key={product.id}>
+              <td className={style.td}>{product.name}</td>
+              <td className={style.td}>{product.description}</td>
+              <td className={style.td}>{product.price}$</td>
+              <td><img src={product.image} alt='' className={style.custom_size} /></td>
+              <td className={style.td}>{product.stock}</td>
+
+              <td className={style.td}>
+                <button onClick={() => deleteProduct(product.id)}>Kustuta</button>
+                <button onClick={() => increaseStock(product.id)}>Suurenda</button>
+                <button onClick={() => decreaseStock(product.id)}>Vähenda</button>
+              </td>
+
+            </tr>)}
+        </tbody>
+      </table>
     </div>
   )
 }

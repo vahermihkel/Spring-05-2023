@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 public class ProductController {
 
     @Autowired
@@ -54,7 +55,7 @@ public class ProductController {
             productRepository.save(product);
             productCache.updateProduct(product.getId());
         }
-        return productRepository.findAll();
+        return productRepository.findAllByOrderById();
     }
 
     // PATCH localhost:8080/decrease-stock/1
@@ -66,7 +67,7 @@ public class ProductController {
             productRepository.save(product);
             productCache.updateProduct(product.getId());
         }
-        return productRepository.findAll();
+        return productRepository.findAllByOrderById();
     }
 
     // PATCH localhost:8080/increase-stock/1
@@ -76,7 +77,7 @@ public class ProductController {
         product.setStock(product.getStock()+1);
         productRepository.save(product);
         productCache.updateProduct(product.getId());
-        return productRepository.findAll();
+        return productRepository.findAllByOrderById();
     }
 
     // GET localhost:8080/products-by-price
@@ -97,8 +98,8 @@ public class ProductController {
         return productRepository.findAllByActive(true);
     }
 
-    // GET localhost:8080/active-products-with-stock
-    @GetMapping("active-products-with-stock")
+    // GET localhost:8080/public-products
+    @GetMapping("public-products")
     public List<Product> getAllActiveProductsWithStock() {
         return productRepository.findByActiveTrueAndStockGreaterThan(0);
     }

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    List<Product> findAllByOrderById();
     // Hinna järjekorras
     List<Product> findAllByOrderByPrice();
     // Kõige kallim toode
@@ -16,4 +17,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Kõik aktiivsed ja kogus suurem kui 0 tooted
     List<Product> findByActiveTrueAndStockGreaterThan(int stock);
+
+//    void deleteByName(String name);
 }

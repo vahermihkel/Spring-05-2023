@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class PersonController {
     //Get all persons localhost:8080/person
     @GetMapping("person")
     public ResponseEntity<List<Person>> getPersons(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        log.info(email);
         return ResponseEntity.ok().body(personRepository.findAll());
     }
 

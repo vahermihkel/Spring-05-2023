@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@CrossOrigin("http://localhost:3000")
 public class ProductController {
 
     @Autowired
@@ -18,6 +17,7 @@ public class ProductController {
 
     @Autowired
     ProductRepository productRepository;
+
 
     // GET localhost:8080/product
     @GetMapping("product")

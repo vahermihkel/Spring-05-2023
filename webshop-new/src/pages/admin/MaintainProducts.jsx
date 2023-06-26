@@ -19,14 +19,15 @@ function MaintainProducts() {
       });
   }, []);
 
-  function deleteProduct(productId) {
-    // TODO: Backendi päring
-    fetch();
+  function deleteProduct(id) {
+    fetch(`http://localhost:8080/product/delete/${id}`, { method: "DELETE" })
+    .then(res => res.json())
+    .then(data => setProducts(data))
   }
 
   const searchFromProducts = () => {
     const result = dbProducts.filter((e) =>
-      e.name.toLowerCase().includes(searchedRef.current.value.toLowerCase())
+      e.name?.toLowerCase().includes(searchedRef.current.value.toLowerCase())
     );
     setProducts(result);
   };

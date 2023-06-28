@@ -24,7 +24,7 @@ public class Order {
     private double totalSum;
     private Date creationDate;
     @OneToMany
-    private List<OrderRow> products;
+    private List<OrderRow> orderRows;
     @ManyToOne
     private Person person;
 }

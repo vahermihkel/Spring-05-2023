@@ -18,7 +18,7 @@ function Payment(props) {
       },
     })
       .then(response => response.json())
-      .then(data => console.log(data));
+      .then(data => window.location.href = data.link);
 
     // fetch("MAKSMA")
     //   .then(res => res.json())

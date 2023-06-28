@@ -74,7 +74,7 @@ public class OrderService {
         order.setPaid("initial");
         order.setTotalSum(sum);
         order.setCreationDate(new Date());
-        order.setProducts(orderRows); // ! kui lisan Orderi andmebaasi, siis siin kohas ta proovib siduda OrderRow-dega,
+        order.setOrderRows(orderRows); // ! kui lisan Orderi andmebaasi, siis siin kohas ta proovib siduda OrderRow-dega,
                                             // aga neid ju pole andmebaasis
         order.setPerson(person);
 
@@ -109,13 +109,14 @@ public class OrderService {
         return data;
     }
 
+    // Product.id, Product.id, Product.id    ---    { Product.id, quantity }, { Product.id, quantity }
     public List<OrderRow> getDbProducts(List<OrderRow> orderRows) throws ExecutionException {
         List<OrderRow> dbProducts = new ArrayList<>();
-        for (OrderRow p: orderRows) {
-            Product originalProduct = productCache.getProduct(p.getId());
+        for (OrderRow o: orderRows) {
+            Product originalProduct = productCache.getProduct(o.getProduct().getId());
             OrderRow orderRow = new OrderRow();
             orderRow.setProduct(originalProduct);
-            orderRow.setQuantity(p.getQuantity());
+            orderRow.setQuantity(o.getQuantity());
             dbProducts.add(orderRow);
         }
         return dbProducts;

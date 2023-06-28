@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("categories").permitAll()
                         .requestMatchers("parcel-machines/**").permitAll()
                         .requestMatchers("payment/**").permitAll()
+                        .requestMatchers("login").permitAll()
+                        .requestMatchers("signup").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(tokenParser, BasicAuthenticationFilter.class).build();

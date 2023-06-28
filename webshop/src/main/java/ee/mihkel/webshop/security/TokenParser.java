@@ -29,11 +29,11 @@ public class TokenParser extends BasicAuthenticationFilter {
         String header = request.getHeader("Authorization");
         log.info(header);
 
-        if (header.equals("Bearer 123")) {
+        if (header != null && header.equals("Bearer 123")) {
             Authentication authentication = new UsernamePasswordAuthenticationToken("m@m.ee", null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        if (header.equals("Bearer 1234")) {
+        if (header != null && header.equals("Bearer 1234")) {
             Authentication authentication = new UsernamePasswordAuthenticationToken("s@s.ee", null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

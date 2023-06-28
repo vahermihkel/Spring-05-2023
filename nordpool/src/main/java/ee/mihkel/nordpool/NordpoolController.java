@@ -1,39 +1,58 @@
 package ee.mihkel.nordpool;
 
-import org.springframework.http.HttpMethod;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Random;
 
 @RestController
-public class NordpoolController {
+public class PaymentController {
 
-    // https://dashboard.elering.ee/api/nps/price?start=2023-05-20T12%3A59%3A59.999Z&end=2023-05-24T20%3A59%3A59.999Z
 
-    @GetMapping("nordpool")
-    public List<TimestampPrice> getNordpoolPrices(
-            @RequestParam String start,
-            @RequestParam String end
-    ) {
-        // 2023-05-20
-        // 2023-05-23
-        // localhost:8080/nordpool?start=2023-05-20&end=2023-05-23
+
+    @GetMapping("payment/{sum}")
+    public ResponseEntity<?> makePayment(@PathVariable String sum) throws URISyntaxException, JsonProcessingException {
+        String apiUrl = "https://igw-demo.every-pay.com/api/v4/payments/oneoff";
+
+        String paymentData = "{\n" +
+                "    \"api_username\": \"e36eb40f5ec87fa2\",\n" +
+                "    \"account_name\": \"EUR3D1\",\n" +
+                "    \"amount\": \"" + sum + "\",\n" +
+                "    \"order_reference\": " + Math.ceil(new Random().nextDouble() * 999999) + ",\n" +
+                "    \"nonce\": \"a9b7f7e7as" + LocalDateTime.now() + new Random().nextDouble() * 999999 + "\",\n" +
+                "    \"timestamp\": \"" + ZonedDateTime.now() + "\",\n" +
+                "    \"customer_url\": \"https://maksmine.web.app/makse\"\n" +
+                "}";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Basic ZTM2ZWI0MGY1ZWM4N2ZhMjo3YjkxYTNiOWUxYjc0NTI0YzJlOWZjMjgyZjhhYzhjZA==");
+
+        HttpEntity<String> request = new HttpEntity<>(paymentData, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-//        ZonedDateTime startDate = ZonedDateTime.;
+        ResponseEntity<String> response = restTemplate.postForEntity(new URI(apiUrl), request, String.class);
 
-//        String url = "https://dashboard.elering.ee/api/nps/price?start=" + startDate + "&end=" + endDate;
-        // yyyy-MM-dd'T'hh:mm:ssZ
-        String url = "https://dashboard.elering.ee/api/nps/price?start=" + start + "T00:00:00.000Z&end=" + end + "T23:59:59.999Z";
-        ResponseEntity<NordpoolResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, NordpoolResponse.class);
-
-        return response.getBody().getData().getEe();
-
-        // Võtaks sisendiks riigi ja tagastab selle riigi ajad
+        if (response.getStatusCode().is2xxSuccessful()) {
+            String responseContent = response.getBody();
+            JsonNode jsonNode = new ObjectMapper().readTree(responseContent);
+            String paymentLink = jsonNode.get("payment_link").asText();
+            return ResponseEntity.ok(paymentLink);
+        } else {
+            return ResponseEntity.badRequest().body("Payment failed.");
+        }
     }
 }

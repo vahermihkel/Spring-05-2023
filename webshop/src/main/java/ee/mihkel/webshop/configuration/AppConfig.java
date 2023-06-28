@@ -35,7 +35,8 @@ public class AppConfig {
 //                WebMvcConfigurer.super.addCorsMappings(registry);
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:3000")
-                        .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH");
+                        .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH")
+                        .allowedHeaders("*");
 //                registry.addMapping("/public")
 //                        .allowedOrigins("http://localhost:4200")
 //                        .allowedMethods("GET");

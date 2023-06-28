@@ -4,6 +4,7 @@ import ee.mihkel.webshop.security.TokenParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,9 +33,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
         return httpSecurity
+                .cors().and().headers().xssProtection().disable().and()
+                .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("product").permitAll()
+                        .requestMatchers("public-products").permitAll()
                         .requestMatchers("categories").permitAll()
+                        .requestMatchers("parcel-machines/**").permitAll()
+                        .requestMatchers("payment/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(tokenParser, BasicAuthenticationFilter.class).build();

@@ -1,12 +1,28 @@
 import React from 'react'
+import config from "../../data/config.json";
+
               //({ sum })
 function Payment(props) {
+
+  // const {sum, products} = props;
   
   function pay() {
 
-    fetch("MAKSMA")
-      .then(res => res.json())
-      .then(json => window.location.href = "UUS_URL");
+    console.log(props.products);
+
+    fetch(config.backendUrl + "/payment/1", {
+      method: "POST",
+      body: JSON.stringify(props.products),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(response => response.json())
+      .then(data => console.log(data));
+
+    // fetch("MAKSMA")
+    //   .then(res => res.json())
+    //   .then(json => window.location.href = "UUS_URL");
   }
 
   return (

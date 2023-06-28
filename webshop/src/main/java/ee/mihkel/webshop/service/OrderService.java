@@ -2,6 +2,7 @@ package ee.mihkel.webshop.service;
 
 import ee.mihkel.webshop.cache.ProductCache;
 import ee.mihkel.webshop.entity.Order;
+import ee.mihkel.webshop.entity.OrderRow;
 import ee.mihkel.webshop.entity.Person;
 import ee.mihkel.webshop.entity.Product;
 import ee.mihkel.webshop.model.EverypayData;
@@ -9,8 +10,10 @@ import ee.mihkel.webshop.model.EverypayLink;
 import ee.mihkel.webshop.model.EverypayPaymentState;
 import ee.mihkel.webshop.model.EverypayResponse;
 import ee.mihkel.webshop.repository.OrderRepository;
+import ee.mihkel.webshop.repository.OrderRowRepository;
 import ee.mihkel.webshop.repository.PersonRepository;
 import ee.mihkel.webshop.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -53,7 +56,11 @@ public class OrderService {
     @Value("${everypay.customer-url}")
     String everypayCustomerUrl;
 
-    public Order saveOrderToDb(Long personId, List<Product> products, double sum) throws Exception {
+    @Autowired
+    OrderRowRepository orderRowRepository;
+
+    @Transactional  // keerab kõik andmebaasipäringud tagasi kui lõpuni ei jõuta
+    public Order saveOrderToDb(Long personId, List<OrderRow> orderRows, double sum) throws Exception {
         Person person;
         if (personRepository.findById(personId).isPresent()) {
             person = personRepository.findById(personId).get();
@@ -61,11 +68,14 @@ public class OrderService {
             throw new Exception("Person not found");
         }
 
+        orderRowRepository.saveAll(orderRows);
+
         Order order = new Order();
         order.setPaid("initial");
         order.setTotalSum(sum);
         order.setCreationDate(new Date());
-        order.setProducts(products);
+        order.setProducts(orderRows); // ! kui lisan Orderi andmebaasi, siis siin kohas ta proovib siduda OrderRow-dega,
+                                            // aga neid ju pole andmebaasis
         order.setPerson(person);
 
         return orderRepository.save(order);
@@ -99,11 +109,14 @@ public class OrderService {
         return data;
     }
 
-    public List<Product> getDbProducts(List<Product> products) throws ExecutionException {
-        List<Product> dbProducts = new ArrayList<>();
-        for (Product p: products) {
+    public List<OrderRow> getDbProducts(List<OrderRow> orderRows) throws ExecutionException {
+        List<OrderRow> dbProducts = new ArrayList<>();
+        for (OrderRow p: orderRows) {
             Product originalProduct = productCache.getProduct(p.getId());
-            dbProducts.add(originalProduct);
+            OrderRow orderRow = new OrderRow();
+            orderRow.setProduct(originalProduct);
+            orderRow.setQuantity(p.getQuantity());
+            dbProducts.add(orderRow);
         }
         return dbProducts;
     }

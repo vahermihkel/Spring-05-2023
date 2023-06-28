@@ -51,7 +51,7 @@ function AddProduct() {
     }
     toast(t("product_added"));
 
-    fetch(config.backendUrl + "/product/add",
+    fetch(config.backendUrl + "/product",
     {
       method: "POST",
       body: JSON.stringify(addProduct),

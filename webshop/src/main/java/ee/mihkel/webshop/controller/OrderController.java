@@ -1,6 +1,7 @@
 package ee.mihkel.webshop.controller;
 
 import ee.mihkel.webshop.entity.Order;
+import ee.mihkel.webshop.entity.OrderRow;
 import ee.mihkel.webshop.entity.Product;
 import ee.mihkel.webshop.model.EverypayLink;
 import ee.mihkel.webshop.repository.OrderRepository;
@@ -31,10 +32,10 @@ public class OrderController {
     }
 
         // LISAMISE UUE ORDERI ANDMEBAASI SEL HETKEL KUI MAKSET ALUSTATAKSE
-    @PostMapping ("payment/{personId}")
-    public EverypayLink payment(@PathVariable Long personId, @RequestBody List<Product> products) throws Exception {
-        List<Product> originalProducts = orderService.getDbProducts(products);
-        double sum = originalProducts.stream().mapToDouble(Product::getPrice).sum(); // võtta igaühe juurest ID ja leida ta andmebaasist
+    @PostMapping("payment/{personId}")
+    public EverypayLink payment(@PathVariable Long personId, @RequestBody List<OrderRow> orderRows) throws Exception {
+        List<OrderRow> originalProducts = orderService.getDbProducts(orderRows);
+        double sum = originalProducts.stream().mapToDouble(e -> e.getProduct().getPrice() * e.getQuantity()).sum(); // võtta igaühe juurest ID ja leida ta andmebaasist
         Order dbOrder = orderService.saveOrderToDb(personId, originalProducts, sum);
 
         return orderService.getEverypayLink(sum, dbOrder);

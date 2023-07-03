@@ -10,7 +10,7 @@ function MaintainProducts() {
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(config.backendUrl + "/product")
+    fetch(config.backendUrl + "/product", {headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")}})
       .then((res) => res.json())
       .then((json) => {
         setProducts(json || []);
@@ -20,7 +20,7 @@ function MaintainProducts() {
   }, []);
 
   function deleteProduct(id) {
-    fetch(`http://localhost:8080/product/delete/${id}`, { method: "DELETE" })
+    fetch(`http://localhost:8080/product/delete/${id}`, { method: "DELETE", headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")} })
     .then(res => res.json())
     .then(data => setProducts(data))
   }
@@ -33,13 +33,13 @@ function MaintainProducts() {
   };
 
   const increaseStock = (id) => {
-    fetch(`http://localhost:8080/increase-stock/${id}`, { method: "PATCH" })
+    fetch(`http://localhost:8080/increase-stock/${id}`, { method: "PATCH", headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")} })
       .then(res => res.json())
       .then(data => setProducts(data))
   };
 
   const decreaseStock = (id) => {  
-    fetch(`http://localhost:8080/decrease-stock/${id}`, { method: "PATCH" })
+    fetch(`http://localhost:8080/decrease-stock/${id}`, { method: "PATCH", headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")} })
       .then(res => res.json())
       .then(data => setProducts(data));
   }
@@ -81,7 +81,7 @@ function MaintainProducts() {
               <td>{element.price}</td>
               <td>{element.description}</td>
               <td>{element.stock}</td>
-              <td>{element.category}</td>
+              <td>{element.category?.name}</td>
               <td>
                 <Link to={"/admin/edit-product/" + element.id}>
                   <button>Edit</button>

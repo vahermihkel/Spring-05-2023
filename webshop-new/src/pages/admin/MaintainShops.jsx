@@ -33,8 +33,10 @@ function MaintainShops() {
     body: JSON.stringify(newShop),
     headers: { "Content-Type": "application/json" }
   })
-    
+    .then(res => res.json())
+    .then(json => setShops(json));
 }
+
 const deleteShop = (id) => {
   fetch(config.backendUrl + "/shop/delete/" + id, {
     method: "DELETE"

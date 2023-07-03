@@ -36,10 +36,12 @@ public class SecurityConfig {
                 .cors().and().headers().xssProtection().disable().and()
                 .csrf().disable()
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("product").permitAll()
+//                        .requestMatchers("product/**").permitAll()
+                        .requestMatchers("carousel").permitAll()
                         .requestMatchers("public-products").permitAll()
                         .requestMatchers("categories").permitAll()
                         .requestMatchers("parcel-machines/**").permitAll()
+                        .requestMatchers("shop/**").permitAll()
                         .requestMatchers("payment/**").permitAll()
                         .requestMatchers("login").permitAll()
                         .requestMatchers("signup").permitAll()

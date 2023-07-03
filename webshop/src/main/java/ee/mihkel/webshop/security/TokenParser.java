@@ -1,5 +1,7 @@
 package ee.mihkel.webshop.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,16 +29,24 @@ public class TokenParser extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         String header = request.getHeader("Authorization");
-        log.info(header);
+        log.info("Authorization: {}",header);
 
-        if (header != null && header.equals("Bearer 123")) {
-            Authentication authentication = new UsernamePasswordAuthenticationToken("m@m.ee", null, null);
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.replace("Bearer ", "");
+            Claims claims = Jwts.parser()
+                    .setSigningKey("super-secrect-key")
+                    .parseClaimsJws(token)
+                    .getBody();
+            String email = claims.getSubject();
+            log.info("Email: {}", email);
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, null);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        if (header != null && header.equals("Bearer 1234")) {
-            Authentication authentication = new UsernamePasswordAuthenticationToken("s@s.ee", null, null);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+//        if (header != null && header.equals("Bearer 1234")) {
+//            Authentication authentication = new UsernamePasswordAuthenticationToken("s@s.ee", null, null);
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//        }
 
         super.doFilterInternal(request, response, chain);
     }

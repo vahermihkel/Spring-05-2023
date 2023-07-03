@@ -32,7 +32,7 @@ function HomePage() {
   }, []);
   
   useEffect(() => {
-    fetch(config.backendUrl + "/product")
+    fetch(config.backendUrl + "/public-products")
       .then((res) => res.json())
       .then((json) => {
         setProducts(json.slice(0,productsInPage));

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { json, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import config from "../../data/config.json";
 import { useState } from 'react';
 import { Spinner } from 'react-bootstrap';
@@ -15,7 +15,7 @@ function EditProduct() {
   const activeRef = useRef();
   const navigate = useNavigate();
 
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState();
 
@@ -31,9 +31,12 @@ function EditProduct() {
 
   useEffect(() => {
     // TODO: BACKENDI PÄRING
-    fetch(config.backendUrl + "/product/" + id)
+    fetch(config.backendUrl + "/product/" + id, {headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")}})
       .then(res => res.json())
-      .then(json => setProduct(json));
+      .then(json => {
+        setProduct(json);
+        setLoading(false);
+      });
   }, [id]);
 
   const edit = () => {
@@ -55,17 +58,18 @@ function EditProduct() {
     }
 
     // TODO: BACKENDI PÄRING
-    fetch(config.backendUrl + "/product/edit", {
+    fetch(config.backendUrl + "/product", {
       method: "PUT",
       body: JSON.stringify(updatedProduct),
       headers: {
-        "Content-Type": "application/json",},
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + sessionStorage.getItem("token")
+      },
     })
       .then(res => res.json())
       .then((json) => {
-        console.log(json);
         setProduct(json);
-        
+        navigate("/admin/maintain-products");
       })
 
   }
@@ -86,7 +90,7 @@ function EditProduct() {
           <label>Image</label> <br />
           <input ref={imageRef} type="text" defaultValue={product.image} /> <br />
           <label>Category</label> <br />
-          <select ref={categoryRef} defaultValue={product.category}>
+          <select ref={categoryRef} defaultValue={product.category.id}>
             <option value="">Vali kategooria!</option>
             {categories.map(category => <option key={category.name} value={category.id}>{category.name}</option>)} 
            </select> <br />

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController()
 public class AuthController {
 
@@ -33,7 +35,7 @@ public class AuthController {
 
 //        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if(encoder.matches(loginData.getPassword(), person.getPassword())) {
-            authToken.setToken("123");
+            authToken.setToken(tokenGenerator.generateToken(person.getEmail()));
         }
 
         return ResponseEntity.ok().body(authToken);
@@ -47,8 +49,9 @@ public class AuthController {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String hashedPassword = encoder.encode(person.getPassword());
             person.setPassword(hashedPassword);
+            person.setCreationDate(new Date());
             personRepository.save(person);
-            authToken.setToken("123");
+            authToken.setToken(tokenGenerator.generateToken(person.getEmail()));
         } else {
             throw new Exception("Id on juba olemas");
         }

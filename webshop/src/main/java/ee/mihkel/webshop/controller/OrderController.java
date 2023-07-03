@@ -2,11 +2,14 @@ package ee.mihkel.webshop.controller;
 
 import ee.mihkel.webshop.entity.Order;
 import ee.mihkel.webshop.entity.OrderRow;
+import ee.mihkel.webshop.entity.Person;
 import ee.mihkel.webshop.entity.Product;
 import ee.mihkel.webshop.model.EverypayLink;
 import ee.mihkel.webshop.repository.OrderRepository;
+import ee.mihkel.webshop.repository.PersonRepository;
 import ee.mihkel.webshop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +20,17 @@ public class OrderController {
     OrderRepository orderRepository;
 
     @Autowired
+    PersonRepository personRepository;
+
+    @Autowired
     OrderService orderService;
+
+    @GetMapping("person-order")
+    public List<Order> getPersonOrders(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        Person person = personRepository.findPersonByEmail(email);
+        return orderRepository.findAllByPerson(person);
+    }
 
     // võtab kõik
     @GetMapping("order")
@@ -32,11 +45,14 @@ public class OrderController {
     }
 
         // LISAMISE UUE ORDERI ANDMEBAASI SEL HETKEL KUI MAKSET ALUSTATAKSE
-    @PostMapping("payment/{personId}")
-    public EverypayLink payment(@PathVariable Long personId, @RequestBody List<OrderRow> orderRows) throws Exception {
+    @PostMapping("payment")
+    public EverypayLink payment(@RequestBody List<OrderRow> orderRows) throws Exception {
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        Person person = personRepository.findPersonByEmail(email);
+
         List<OrderRow> originalProducts = orderService.getDbProducts(orderRows);
         double sum = originalProducts.stream().mapToDouble(e -> e.getProduct().getPrice() * e.getQuantity()).sum(); // võtta igaühe juurest ID ja leida ta andmebaasist
-        Order dbOrder = orderService.saveOrderToDb(personId, originalProducts, sum);
+        Order dbOrder = orderService.saveOrderToDb(person.getId(), originalProducts, sum);
 
         return orderService.getEverypayLink(sum, dbOrder);
     }

@@ -8,10 +8,17 @@ function MaintainProducts() {
   const [dbProducts, setDbProducts] = useState([]);
   const searchedRef = useRef();
   const [isLoading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     fetch(config.backendUrl + "/product", {headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")}})
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.ok === true) {
+          return res.json();
+        } else {
+          setMessage("NO_ADMIN");
+        }
+      })
       .then((json) => {
         setProducts(json || []);
         setDbProducts(json || []);
@@ -46,6 +53,10 @@ function MaintainProducts() {
 
   if (isLoading === true) {
     return <Spinner animation="grow" variant="success" />;
+  }
+
+  if (message === "NO_ADMIN") {
+    return  <div>Sul pole piisavalt õigusi, et seda vaadet vaadata!</div>;
   }
 
   return (

@@ -19,9 +19,12 @@ import { AuthContext } from './store/AuthContext';
 import Profile from './pages/auth/Profile';
 import CheckPayment from './pages/global/CheckPayment';
 import MaintainCarouselPictures from './pages/admin/MaintainCarouselPictures';
+import Persons from './pages/admin/Persons';
+import AllOrders from './pages/admin/AllOrders';
+import Order from "./pages/global/Order";
 
 function App() {
-  const { loggedIn } = useContext(AuthContext);
+  const { loggedInUser } = useContext(AuthContext);
 
   return (
     <div className="App">
@@ -33,8 +36,13 @@ function App() {
         <Route path="shops" element={<Shops />} />
         <Route path="product/:id" element={<SingleProduct />} />
         <Route path="payment" element={<CheckPayment />} />
-        {true && <>
+        
+        {loggedInUser.email && <>
+          <Route path="order" element={ <Order/> } />
           <Route path="profile" element={<Profile />} />
+        </>}
+
+        {loggedInUser && <>
           <Route path="admin" element={<AdminHome />} />
           <Route path="admin/add-product" element={<AddProduct />} />
           <Route path="admin/edit-product/:id" element={<EditProduct />} />
@@ -42,6 +50,8 @@ function App() {
           <Route path="admin/maintain-categories" element={<MaintainCategories />} />
           <Route path="admin/maintain-carousel" element={ <MaintainCarouselPictures/> } />
           <Route path="admin/maintain-shops" element={<MaintainShops />} />
+          <Route path="admin/persons" element={ <Persons /> } />  
+          <Route path="admin/all-orders" element={ <AllOrders/> } />
         </>}
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />

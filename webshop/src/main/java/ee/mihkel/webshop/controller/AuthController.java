@@ -35,7 +35,7 @@ public class AuthController {
 
 //        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if(encoder.matches(loginData.getPassword(), person.getPassword())) {
-            authToken.setToken(tokenGenerator.generateToken(person.getEmail()));
+            authToken.setToken(tokenGenerator.generateToken(person.getEmail(), person.isAdmin()));
         }
 
         return ResponseEntity.ok().body(authToken);
@@ -46,12 +46,12 @@ public class AuthController {
         AuthToken authToken = new AuthToken();
 
         if (person.getId()==null ||!personRepository.existsById(person.getId())) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String hashedPassword = encoder.encode(person.getPassword());
             person.setPassword(hashedPassword);
             person.setCreationDate(new Date());
             personRepository.save(person);
-            authToken.setToken(tokenGenerator.generateToken(person.getEmail()));
+            authToken.setToken(tokenGenerator.generateToken(person.getEmail(), false));
         } else {
             throw new Exception("Id on juba olemas");
         }

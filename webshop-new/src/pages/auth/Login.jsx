@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import config from "../../data/config.json";
 
 function Login() {
-  const { setLoggedIn } = useContext(AuthContext);
+  const { setLoggedIn, setLoggedInUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -29,7 +29,15 @@ function Login() {
       // vale parool               vale email
         if (data.token !== null && data.token !== undefined) {
           setLoggedIn(true);
-          navigate('/admin');
+          // VAJA PANNA KA KASUTAJA CONTEXTI
+          fetch(config.backendUrl + "/person-account", {
+            headers: { Authorization: "Bearer " + data.token },
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              setLoggedInUser(data);
+            });
+          navigate('/profile');
           sessionStorage.setItem("token", data.token); // SALVESTA ÄRA SESSIONSTORAGESSE
         } else {
           setMessage(data.message);

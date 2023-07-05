@@ -16,24 +16,24 @@ public class CategoryController {
         return categoryRepository.findAll();
     }
     // Taking  by id
-    @GetMapping("category/{id}")
+    @GetMapping("categories/{id}")
     public Category getCategory(@PathVariable Long id){
         return categoryRepository.findById(id).get();
     }
     // Deleting
-    @DeleteMapping("category/delete/{id}")
+    @DeleteMapping("categories/{id}")
     public List<Category> deleteCategory(@PathVariable Long id){
         categoryRepository.deleteById(id);
         return categoryRepository.findAll();
     }
     // Adding category
-    @PostMapping("category/add")
+    @PostMapping("categories")
     public List<Category> addCategory(@RequestBody Category category){
         categoryRepository.save(category);
         return categoryRepository.findAll();
     }
     // Editing category
-    @PutMapping("category")
+    @PutMapping("categories")
     public List<Category> editCategory(@RequestBody Category category){
         if (categoryRepository.existsById(category.getId())){
             categoryRepository.save(category);

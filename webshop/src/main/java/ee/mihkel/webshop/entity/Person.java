@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 
@@ -26,4 +27,6 @@ public class Person {
     private String personalCode;
     private Date creationDate;
     private String password;
+    @ColumnDefault("false")
+    private boolean admin;
 }

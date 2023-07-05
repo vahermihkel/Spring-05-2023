@@ -55,7 +55,10 @@ function AddProduct() {
     {
       method: "POST",
       body: JSON.stringify(addProduct),
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + sessionStorage.getItem("token")
+      },
     })
 
     nameRef.current.value = "";

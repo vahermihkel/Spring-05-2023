@@ -14,18 +14,19 @@ function MaintainCategories() {
   const add = () => {
     const newCategory = {"name": categoryRef.current.value};
 
-    fetch(config.backendUrl + "/category/add", {
+    fetch(config.backendUrl + "/categories", {
       method: "POST", 
       body: JSON.stringify(newCategory), 
-      headers: {"Content-Type": "application/json"}
+      headers: {"Content-Type": "application/json","Authorization": "Bearer " + sessionStorage.getItem("token")}
     })
       .then(res => res.json())
       .then(json => setCategories(json));
   }
 
   const deleteCategory = (id) => {
-    fetch(config.backendUrl + "/category/delete/" + id, {
-      method: "DELETE"
+    fetch(config.backendUrl + "/categories/" + id, {
+      method: "DELETE",
+      headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")}
     })
       .then(res => res.json())
       .then(json => setCategories(json));

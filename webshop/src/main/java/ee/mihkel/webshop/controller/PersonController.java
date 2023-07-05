@@ -90,4 +90,11 @@ public class PersonController {
         }
         return ResponseEntity.ok().body(personRepository.findAll());
     }
+
+    @GetMapping("person-account")
+    public Person getPersonAccount() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        Person person = personRepository.findPersonByEmail(email);
+        return person;
+    }
 }

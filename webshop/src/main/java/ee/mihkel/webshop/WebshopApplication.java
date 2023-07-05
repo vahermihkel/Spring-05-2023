@@ -17,4 +17,5 @@ public class WebshopApplication {
 // 05.07 --- 16. rolle - Admin / Tavakasutaja, enda profiili (vastavalt tokenile)
 // 10.07 --- 17. serverisse üles -> makse lõpuni, unit testid
 // Vahepealne aeg lõpuprojekti tegemiseks
-// 19.07 --- 18. poolik päev, arutame sinu projekti
+// 21.07 --- 05.07 koolitusest 45min teeme järgi
+// 28.07     18. poolik päev, arutame sinu projekti

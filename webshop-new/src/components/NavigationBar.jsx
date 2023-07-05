@@ -32,9 +32,10 @@ function NavigationBar() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            {loggedIn === true && <Nav.Link as={Link} to="/admin">{t("nav.admin")}</Nav.Link>}
+            {loggedInUser.admin === true && <Nav.Link as={Link} to="/admin">{t("nav.admin")}</Nav.Link>}
             <Nav.Link as={Link} to="/shops">{t("nav.shops")}</Nav.Link>
             <Nav.Link as={Link} to="/cart">{t("nav.cart")}</Nav.Link>
+            <Nav.Link as={Link} to="/order">{t("nav.orders")}</Nav.Link>
             {loggedIn === false ? 
               <>
                 <Nav.Link as={Link} to="/login">Login</Nav.Link>
@@ -43,7 +44,7 @@ function NavigationBar() {
                 : 
               <>
               <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
-              {loggedInUser.users !== undefined && <div>Oled sise logitud: {loggedInUser.users[0].email} {loggedInUser.users[0].displayName}</div>}
+              {loggedInUser.email !== undefined && <div>Oled sise logitud: {loggedInUser.email} {loggedInUser.firstName}</div>}
                 <button onClick={logout}>Logi välja</button>
               </>
               }

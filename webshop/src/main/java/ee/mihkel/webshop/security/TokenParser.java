@@ -11,11 +11,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Log4j2
@@ -40,7 +44,16 @@ public class TokenParser extends BasicAuthenticationFilter {
             String email = claims.getSubject();
             log.info("Email: {}", email);
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, null);
+            List<GrantedAuthority> authorities = new ArrayList<>();
+
+            if (claims.getAudience().equals("ADMIN")) {
+                GrantedAuthority authority = new SimpleGrantedAuthority("Admin");
+                authorities.add(authority);
+                log.info("LÄKSIN SISSE");
+            }
+
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 //        if (header != null && header.equals("Bearer 1234")) {

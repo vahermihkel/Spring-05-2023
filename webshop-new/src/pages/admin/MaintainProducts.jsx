@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import config from "../../data/config.json";
 import { Link } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
+import { validateHttpResponses } from "../../util/HttpResponses";
 
 function MaintainProducts() {
   const [products, setProducts] = useState([]);
@@ -27,9 +28,23 @@ function MaintainProducts() {
   }, []);
 
   function deleteProduct(id) {
-    fetch(`http://localhost:8080/product/delete/${id}`, { method: "DELETE", headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")} })
-    .then(res => res.json())
-    .then(data => setProducts(data))
+    fetch(`http://localhost:8080/product/${id}`, { method: "DELETE", headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")} })
+    .then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } 
+
+      setMessage(validateHttpResponses(res, "Toode"));
+    })
+    .then(data => {
+      if (data) {
+        setProducts(data);
+        // const index = products.findIndex(p => p.id === id);
+        // products.splice(index, 1);
+        // setProducts(products.slice());
+        setMessage("Toode kustutatud");
+      }
+    })
   }
 
   const searchFromProducts = () => {
@@ -61,6 +76,7 @@ function MaintainProducts() {
 
   return (
     <div>
+      <div>{message}</div>
       <input onChange={searchFromProducts} ref={searchedRef} type="text" />
       <div>{products.length} tk</div>
       <table>

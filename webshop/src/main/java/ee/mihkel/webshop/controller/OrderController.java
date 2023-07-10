@@ -51,7 +51,7 @@ public class OrderController {
         Person person = personRepository.findPersonByEmail(email);
 
         List<OrderRow> originalProducts = orderService.getDbProducts(orderRows);
-        double sum = originalProducts.stream().mapToDouble(e -> e.getProduct().getPrice() * e.getQuantity()).sum(); // võtta igaühe juurest ID ja leida ta andmebaasist
+        double sum = orderService.calculateTotalSum(originalProducts); // võtta igaühe juurest ID ja leida ta andmebaasist
         Order dbOrder = orderService.saveOrderToDb(person.getId(), originalProducts, sum);
 
         return orderService.getEverypayLink(sum, dbOrder);

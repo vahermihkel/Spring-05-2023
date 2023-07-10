@@ -4,6 +4,7 @@ import ee.mihkel.webshop.cache.ProductCache;
 import ee.mihkel.webshop.entity.Product;
 import ee.mihkel.webshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,10 +28,14 @@ public class ProductController {
 
     // DELETE localhost:8080/product/1
     @DeleteMapping("product/{id}")
-    public List<Product> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<List<Product>> deleteProduct(@PathVariable Long id) {
+        // DataIntegrityViolationException
+        if (!productRepository.existsById(id)) {
+            return ResponseEntity.status(204).body(productRepository.findAll());
+        }
         productRepository.deleteById(id);
         productCache.emptyCache();
-        return productRepository.findAll();
+        return ResponseEntity.ok(productRepository.findAll());
     }
 
     // GET localhost:8080/product/1

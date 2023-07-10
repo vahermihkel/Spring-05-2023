@@ -142,4 +142,8 @@ public class OrderService {
 
         return order;
     }
+
+    public double calculateTotalSum(List<OrderRow> originalProducts) {
+        return originalProducts.stream().mapToDouble(e -> e.getProduct().getPrice() * e.getQuantity()).sum();
+    }
 }

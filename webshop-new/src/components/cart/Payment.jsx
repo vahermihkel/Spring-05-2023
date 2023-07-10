@@ -10,11 +10,12 @@ function Payment(props) {
 
     console.log(props.products);
 
-    fetch(config.backendUrl + "/payment/1", {
+    fetch(config.backendUrl + "/payment", {
       method: "POST",
       body: JSON.stringify(props.products),
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + sessionStorage.getItem("token")
       },
     })
       .then(response => response.json())

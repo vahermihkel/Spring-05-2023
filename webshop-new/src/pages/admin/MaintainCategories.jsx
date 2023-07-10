@@ -24,7 +24,7 @@ function MaintainCategories() {
   }
 
   const deleteCategory = (id) => {
-    fetch(config.backendUrl + "/categories/" + id, {
+    fetch(config.backendUrl + "/categories/" + 999, {
       method: "DELETE",
       headers: {"Authorization": "Bearer " + sessionStorage.getItem("token")}
     })
